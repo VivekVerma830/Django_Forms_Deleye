@@ -124,6 +124,7 @@ def delete(request,pk):
                     'city':city,
                     'password':password
                 }
+        return render(request,'dashboard.html',{'data':data,'query':form1,'data1':data1})
         
 def edit (request,pk):
             # print(pk)
@@ -132,7 +133,39 @@ def edit (request,pk):
         user = StudentQuery.objects.get(id=pk)
         name = user.stu_name
         email = user.stu_email
-        user.delete()
+        # user.delete()
+        initial_data = {
+                        'stu_name': name,
+                        'stu_email': email
+                    } 
+        form1=QueryForm(initial=initial_data)
+        data1 = StudentQuery.objects.filter(stu_email=email)
+        user1 = StudentModel.objects.get(stu_email=email)
+        name = user1.stu_name
+        email = user1.stu_email
+        contact = user1.stu_mobile
+        city = user1.stu_city
+        password = user1.stu_password
+        data = {
+                    'name':name,
+                    'email':email,
+                    'contact':contact,
+                    'city':city,
+                    'password':password
+                    
+                }
+        return render(request,'dashboard.html',{'data':data,'query':form1,'data1':data,'pk':pk})
+        
+def update (request,pk):
+            # print(pk)
+    form = QueryForm()
+    if request.method=="POST":
+        old_data = StudentQuery.objects.get(id=pk)
+        query_data = QueryForm(request.POST,instance=old_data)
+        if query_data.is_valid():
+          name = query_data.cleaned_data['stu_name']
+          email = query_data.cleaned_data['stu_email']
+          query = query_data.cleaned_data['stu_query']
         initial_data = {
                         'stu_name': name,
                         'stu_email': email
